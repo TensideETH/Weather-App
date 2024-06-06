@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        /* CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <form id="weather-form">
+            <input type="text" id="city-input" placeholder="Enter city name">
+            <button type="submit">Get Weather</button>
+        </form>
+        <div id="weather-info"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('weather-form');
+            const input = document.getElementById('city-input');
+            const weatherInfo = document.getElementById('weather-info');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const city = input.value.trim();
+                if (city !== '') {
+                    try {
+                        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=YOUR_API_KEY`);
+                        const data = await response.json();
+                        const weather = data.weather[0].description;
+                        const temperature = (data.main.temp - 273.15).toFixed(1);
+                        const humidity = data.main.humidity;
+                        const windSpeed = data.wind.speed;
+
+                        weatherInfo.innerHTML = `
+                            <h2>${city}</h2>
+                            <p><strong>Weather:</strong> ${weather}</p>
+                            <p><strong>Temperature:</strong> ${temperature}°C</p>
+                            <p><strong>Humidity:</strong> ${humidity}%</p>
+                            <p><strong>Wind Speed:</strong> ${windSpeed} m/s</p>
+                        `;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        weatherInfo.textContent = 'Failed to fetch weather data. Please try again.';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
